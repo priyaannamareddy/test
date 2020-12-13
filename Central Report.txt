@@ -1,0 +1,27 @@
+DATA  :  lr_data   TYPE REF TO data.
+FIELD-SYMBOLS  : <lt_data> TYPE ANY TABLE,
+                 <lw_data> TYPE any.
+
+*& Setting up runtime info
+cl_salv_bs_runtime_info=>set(    EXPORTING display  = abap_false
+                                           metadata = abap_false
+                                           data     = abap_true ).
+SUBMIT ztestpan1  AND RETURN.
+
+TRY.
+    cl_salv_bs_runtime_info=>get_data_ref( IMPORTING r_data = lr_data ).
+    ASSIGN lr_data->* TO <lt_data>.
+    BREAK-POINT.
+  CATCH cx_salv_bs_sc_runtime_info.
+    MESSAGE 'Unable to retrieve ALV data' TYPE 'E'.
+ENDTRY.
+cl_salv_bs_runtime_info=>clear_all( ).
+
+*& Move the output from other program to current program and update monitoring table
+LOOP AT <lt_data> ASSIGNING  <lw_data>.
+*Modify zmontortab from  <lw_data>.
+ENDLOOP.
+
+
+
+WRITE : 'test'.
